@@ -10,7 +10,7 @@ const port = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-    origin: '*', // For development, allow all. Change to Vercel URL in production.
+    origin: ['https://praveenswebsite.vercel.app', 'http://localhost:3000', 'http://localhost:5000'],
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type']
 }));
