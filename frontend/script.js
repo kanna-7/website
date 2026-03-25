@@ -1,47 +1,30 @@
 // ProjectPraveen - Script Logic
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Analytics & Tracking
+    // 1. Track Visit
     const backendUrl = 'https://projectpraveen.onrender.com';
-
-    function updateStats() {
-        // Fetch Visitor Count
-        fetch(`${backendUrl}/api/visit-count`)
-            .then(res => res.json())
-            .then(data => {
-                const heroCountEl = document.getElementById('heroVisitorCount');
-                const footerCountEl = document.getElementById('footerVisitorCount');
-                if (heroCountEl) heroCountEl.innerText = data.count;
-                if (footerCountEl) footerCountEl.innerText = `${data.count} visitors`;
-            });
-        
-        // Fetch Download Count
-        fetch(`${backendUrl}/api/download-count`)
-            .then(res => res.json())
-            .then(data => {
-                const downloadEl = document.getElementById('downloadCount');
-                if (downloadEl) downloadEl.innerText = `${data.count} downloads`;
-            });
-    }
-
-    // Initial Track Visit
     fetch(`${backendUrl}/api/visit`, { method: 'POST' })
-        .then(() => updateStats())
+        .then(() => {
+            // After tracking, fetch the total count
+            fetch(`${backendUrl}/api/visit-count`)
+                .then(res => res.json())
+                .then(data => {
+                    const countEl = document.getElementById('heroVisitorCount');
+                    if (countEl) countEl.innerText = data.count;
+                });
+
+            // Also fetch the download count
+            fetch(`${backendUrl}/api/download-count`)
+                .then(res => res.json())
+                .then(data => {
+                    const downloadEl = document.getElementById('downloadCount');
+                    if (downloadEl) downloadEl.innerText = `${data.count} downloads`;
+                });
+        })
         .catch(err => {
             console.log('Analytics offline');
-            const heroCountEl = document.getElementById('heroVisitorCount');
-            const footerCountEl = document.getElementById('footerVisitorCount');
-            if (heroCountEl) heroCountEl.parentElement.style.display = 'none';
-            if (footerCountEl) footerCountEl.style.display = 'none';
+            const countEl = document.getElementById('heroVisitorCount');
+            if (countEl) countEl.parentElement.style.display = 'none';
         });
-
-    // Update Download count when button is clicked
-    const downloadBtn = document.querySelector('a[download]');
-    if (downloadBtn) {
-        downloadBtn.addEventListener('click', () => {
-            // Wait 2 seconds for backend to process, then update the UI
-            setTimeout(updateStats, 2000);
-        });
-    }
 
     // 2. Initialize Feather Icons
     Toggle

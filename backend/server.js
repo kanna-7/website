@@ -73,7 +73,8 @@ app.get('/api/visit-count', async (req, res) => {
         const database = client.db('portfolio');
         const analytics = database.collection('analytics');
         const stats = await analytics.findOne({ id: 'site_stats' });
-        res.status(200).json({ count: stats?.visitor_count || 0 });
+
+        res.status(200).json({ count: stats ? stats.visitor_count : 0 });
     } catch (err) {
         console.error('Error fetching visit count:', err);
         res.status(500).json({ success: false });
@@ -138,7 +139,8 @@ app.get('/api/download-count', async (req, res) => {
         const database = client.db('portfolio');
         const analytics = database.collection('analytics');
         const stats = await analytics.findOne({ id: 'site_stats' });
-        res.status(200).json({ count: stats?.download_count || 0 });
+
+        res.status(200).json({ count: stats ? stats.download_count : 0 });
     } catch (err) {
         console.error('Error fetching download count:', err);
         res.status(500).json({ success: false });
