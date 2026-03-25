@@ -1,5 +1,37 @@
+// ProjectPraveen - Script Logic
 document.addEventListener('DOMContentLoaded', () => {
-    // Mobile Navigation Toggle
+    // 1. Track Visit
+    const backendUrl = 'https://projectpraveen.onrender.com';
+    fetch(`${backendUrl}/api/visit`, { method: 'POST' })
+        .then(() => {
+            // After tracking, fetch the total count
+            fetch(`${backendUrl}/api/visit-count`)
+                .then(res => res.json())
+                .then(data => {
+                    const heroCountEl = document.getElementById('heroVisitorCount');
+                    const footerCountEl = document.getElementById('footerVisitorCount');
+                    if (heroCountEl) heroCountEl.innerText = data.count;
+                    if (footerCountEl) footerCountEl.innerText = `${data.count} visitors`;
+                });
+            
+            // Also fetch the download count
+            fetch(`${backendUrl}/api/download-count`)
+                .then(res => res.json())
+                .then(data => {
+                    const downloadEl = document.getElementById('downloadCount');
+                    if (downloadEl) downloadEl.innerText = `${data.count} downloads`;
+                });
+        })
+        .catch(err => {
+            console.log('Analytics offline');
+            const heroCountEl = document.getElementById('heroVisitorCount');
+            const footerCountEl = document.getElementById('footerVisitorCount');
+            if (heroCountEl) heroCountEl.parentElement.style.display = 'none';
+            if (footerCountEl) footerCountEl.style.display = 'none';
+        });
+
+    // 2. Initialize Feather Icons
+ Toggle
     const menuToggle = document.getElementById('mobile-menu');
     const navLinks = document.querySelector('.nav-links');
 

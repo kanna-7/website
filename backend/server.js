@@ -44,6 +44,40 @@ app.get('/', (req, res) => {
     res.send('ProjectPraveen Backend is running');
 });
 
+// Analytics: Track Page Visit
+app.post('/api/visit', async (req, res) => {
+    try {
+        const database = client.db('portfolio');
+        const analytics = database.collection('analytics');
+        
+        // Increment visitor count (using a single document with id: 'site_stats')
+        await analytics.updateOne(
+            { id: 'site_stats' },
+            { $inc: { visitor_count: 1 } },
+            { upsert: true }
+        );
+        
+        res.status(200).json({ success: true });
+    } catch (err) {
+        console.error('Error tracking visit:', err);
+        res.status(500).json({ success: false });
+    }
+});
+
+// Analytics: Get Visitor Count
+app.get('/api/visit-count', async (req, res) => {
+    try {
+        const database = client.db('portfolio');
+        const analytics = database.collection('analytics');
+        const stats = await analytics.findOne({ id: 'site_stats' });
+        
+        res.status(200).json({ count: stats ? stats.visitor_count : 0 });
+    } catch (err) {
+        console.error('Error fetching visit count:', err);
+        res.status(500).json({ success: false });
+    }
+});
+
 // Contact Form Endpoint
 app.post('/api/contact', async (req, res) => {
     const { name, email, message } = req.body;
@@ -72,9 +106,38 @@ app.post('/api/contact', async (req, res) => {
 });
 
 // APK Download Endpoint
-app.get('/download/ramsethu', (req, res) => {
-    const filePath = path.join(__dirname, 'ramsethu.apk');
-    res.download(filePath, 'ramsethu.apk');
+app.get('/download/ramsethu', async (req, res) => {
+    try {
+        const database = client.db('portfolio');
+        const analytics = database.collection('analytics');
+        
+        // Increment download count
+        await analytics.updateOne(
+            { id: 'site_stats' },
+            { $inc: { download_count: 1 } },
+            { upsert: true }
+        );
+
+        const filePath = path.join(__dirname, 'ramsethu.apk');
+        res.download(filePath, 'ramsethu.apk');
+    } catch (err) {
+        console.error('Error tracking download:', err);
+        res.status(500).send('Error downloading file');
+    }
+});
+
+// Analytics: Get Download Count
+app.get('/api/download-count', async (req, res) => {
+    try {
+        const database = client.db('portfolio');
+        const analytics = database.collection('analytics');
+        const stats = await analytics.findOne({ id: 'site_stats' });
+        
+        res.status(200).json({ count: stats ? stats.download_count : 0 });
+    } catch (err) {
+        console.error('Error fetching download count:', err);
+        res.status(500).json({ success: false });
+    }
 });
 
 app.listen(port, () => {
