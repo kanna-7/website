@@ -1,27 +1,31 @@
 // ProjectPraveen - Script Logic
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Track Visit
+    // 1. Analytics & Tracking
     const backendUrl = 'https://projectpraveen.onrender.com';
+
+    function updateStats() {
+        // Fetch Visitor Count
+        fetch(`${backendUrl}/api/visit-count`)
+            .then(res => res.json())
+            .then(data => {
+                const heroCountEl = document.getElementById('heroVisitorCount');
+                const footerCountEl = document.getElementById('footerVisitorCount');
+                if (heroCountEl) heroCountEl.innerText = data.count;
+                if (footerCountEl) footerCountEl.innerText = `${data.count} visitors`;
+            });
+        
+        // Fetch Download Count
+        fetch(`${backendUrl}/api/download-count`)
+            .then(res => res.json())
+            .then(data => {
+                const downloadEl = document.getElementById('downloadCount');
+                if (downloadEl) downloadEl.innerText = `${data.count} downloads`;
+            });
+    }
+
+    // Initial Track Visit
     fetch(`${backendUrl}/api/visit`, { method: 'POST' })
-        .then(() => {
-            // After tracking, fetch the total count
-            fetch(`${backendUrl}/api/visit-count`)
-                .then(res => res.json())
-                .then(data => {
-                    const heroCountEl = document.getElementById('heroVisitorCount');
-                    const footerCountEl = document.getElementById('footerVisitorCount');
-                    if (heroCountEl) heroCountEl.innerText = data.count;
-                    if (footerCountEl) footerCountEl.innerText = `${data.count} visitors`;
-                });
-            
-            // Also fetch the download count
-            fetch(`${backendUrl}/api/download-count`)
-                .then(res => res.json())
-                .then(data => {
-                    const downloadEl = document.getElementById('downloadCount');
-                    if (downloadEl) downloadEl.innerText = `${data.count} downloads`;
-                });
-        })
+        .then(() => updateStats())
         .catch(err => {
             console.log('Analytics offline');
             const heroCountEl = document.getElementById('heroVisitorCount');
@@ -30,8 +34,17 @@ document.addEventListener('DOMContentLoaded', () => {
             if (footerCountEl) footerCountEl.style.display = 'none';
         });
 
+    // Update Download count when button is clicked
+    const downloadBtn = document.querySelector('a[download]');
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', () => {
+            // Wait 2 seconds for backend to process, then update the UI
+            setTimeout(updateStats, 2000);
+        });
+    }
+
     // 2. Initialize Feather Icons
- Toggle
+    Toggle
     const menuToggle = document.getElementById('mobile-menu');
     const navLinks = document.querySelector('.nav-links');
 
@@ -57,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     top: targetSection.offsetTop - 70, // offset for fixed navbar
                     behavior: 'smooth'
                 });
-                
+
                 // Close mobile menu if open
                 if (navLinks.classList.contains('active')) {
                     navLinks.classList.remove('active');
@@ -69,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update active state on scroll
     window.addEventListener('scroll', () => {
         let current = '';
-        
+
         // Find current section
         sections.forEach(section => {
             const sectionTop = section.offsetTop;
@@ -94,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const submitBtn = contactForm.querySelector('button[type="submit"]');
             const originalText = submitBtn.textContent;
-            
+
             // Visual feedback
             submitBtn.textContent = 'Sending...';
             submitBtn.disabled = true;
@@ -117,35 +130,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 body: JSON.stringify(formData)
             })
-            .then(async (response) => {
-                const json = await response.json();
-                if (response.status == 200) {
-                    submitBtn.textContent = 'Message Sent Successfully!';
-                    submitBtn.style.backgroundColor = 'var(--color-green)';
-                    submitBtn.style.borderColor = 'var(--color-green)';
-                    submitBtn.style.color = 'var(--color-cream)';
-                    contactForm.reset();
-                } else {
-                    console.log(response);
-                    submitBtn.textContent = json.message || 'Failed to Send';
+                .then(async (response) => {
+                    const json = await response.json();
+                    if (response.status == 200) {
+                        submitBtn.textContent = 'Message Sent Successfully!';
+                        submitBtn.style.backgroundColor = 'var(--color-green)';
+                        submitBtn.style.borderColor = 'var(--color-green)';
+                        submitBtn.style.color = 'var(--color-cream)';
+                        contactForm.reset();
+                    } else {
+                        console.log(response);
+                        submitBtn.textContent = json.message || 'Failed to Send';
+                        submitBtn.style.backgroundColor = '#cc0000';
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    submitBtn.textContent = 'Something went wrong!';
                     submitBtn.style.backgroundColor = '#cc0000';
-                }
-            })
-            .catch(error => {
-                console.log(error);
-                submitBtn.textContent = 'Something went wrong!';
-                submitBtn.style.backgroundColor = '#cc0000';
-            })
-            .finally(() => {
-                // Reset button after 3 seconds
-                setTimeout(() => {
-                    submitBtn.textContent = originalText;
-                    submitBtn.style.backgroundColor = '';
-                    submitBtn.style.borderColor = '';
-                    submitBtn.style.color = '';
-                    submitBtn.disabled = false;
-                }, 3000);
-            });
+                })
+                .finally(() => {
+                    // Reset button after 3 seconds
+                    setTimeout(() => {
+                        submitBtn.textContent = originalText;
+                        submitBtn.style.backgroundColor = '';
+                        submitBtn.style.borderColor = '';
+                        submitBtn.style.color = '';
+                        submitBtn.disabled = false;
+                    }, 3000);
+                });
         });
     }
 });
