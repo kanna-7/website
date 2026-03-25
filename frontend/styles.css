@@ -519,6 +519,7 @@ footer {
     .about-content,
     .contact-wrapper {
         grid-template-columns: 1fr;
+        gap: 3rem;
     }
     
     .hero .title {
@@ -527,6 +528,10 @@ footer {
 
     .hero .tagline {
         font-size: 1.2rem;
+    }
+
+    .section {
+        padding: 4rem 0;
     }
 }
 
@@ -540,7 +545,7 @@ footer {
         flex-direction: column;
         gap: 0;
         text-align: center;
-        border-bottom: 1px solid var(--color-cream-dark);
+        border-bottom: 2px solid var(--color-gold);
         clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
         transition: var(--transition-smooth);
     }
@@ -550,15 +555,54 @@ footer {
     }
 
     .nav-links li {
-        padding: 1.5rem 0;
+        padding: 1.2rem 0;
         border-top: 1px solid var(--color-cream-dark);
     }
 
     .menu-toggle {
         display: block;
+        font-size: 1.8rem;
+    }
+
+    .hero .title {
+        font-size: 2.8rem;
+    }
+
+    .hero .subtitle {
+        font-size: 1rem;
     }
 
     .hero-actions {
         flex-direction: column;
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    .projects-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+    }
+
+    .section-header h2 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero .title {
+        font-size: 2.2rem;
+    }
+    
+    .logo {
+        font-size: 1.5rem;
+    }
+
+    .contact-form {
+        padding: 2rem 1.5rem;
     }
 }
