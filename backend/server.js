@@ -47,19 +47,22 @@ app.get('/', (req, res) => {
 // Analytics: Track Page Visit
 app.post('/api/visit', async (req, res) => {
     try {
-        const database = client.db('portfolio');
-        const analytics = database.collection('analytics');
-        
-        // Increment visitor count (using a single document with id: 'site_stats')
-        await analytics.updateOne(
-            { id: 'site_stats' },
-            { $inc: { visitor_count: 1 } },
-            { upsert: true }
-        );
+        // Increment visitor count
+        try {
+            const database = client.db('portfolio');
+            const analytics = database.collection('analytics');
+            await analytics.updateOne(
+                { id: 'site_stats' },
+                { $inc: { visitor_count: 1 } },
+                { upsert: true }
+            );
+        } catch (dbErr) {
+            console.error('Database analytics error (Visit):', dbErr);
+        }
         
         res.status(200).json({ success: true });
     } catch (err) {
-        console.error('Error tracking visit:', err);
+        console.error('Critical visit error:', err);
         res.status(500).json({ success: false });
     }
 });
@@ -108,21 +111,25 @@ app.post('/api/contact', async (req, res) => {
 // APK Download Endpoint
 app.get('/download/ramsethu', async (req, res) => {
     try {
-        const database = client.db('portfolio');
-        const analytics = database.collection('analytics');
-        
-        // Increment download count
-        await analytics.updateOne(
-            { id: 'site_stats' },
-            { $inc: { download_count: 1 } },
-            { upsert: true }
-        );
+        // 1. Try to increment download count (Don't let DB errors stop the download)
+        try {
+            const database = client.db('portfolio');
+            const analytics = database.collection('analytics');
+            await analytics.updateOne(
+                { id: 'site_stats' },
+                { $inc: { download_count: 1 } },
+                { upsert: true }
+            );
+        } catch (dbErr) {
+            console.error('Database analytics error (Download):', dbErr);
+        }
 
+        // 2. Serve the file
         const filePath = path.join(__dirname, 'ramsethu.apk');
         res.download(filePath, 'ramsethu.apk');
     } catch (err) {
-        console.error('Error tracking download:', err);
-        res.status(500).send('Error downloading file');
+        console.error('Critical download error:', err);
+        res.status(500).send('Server Error: Could not process download.');
     }
 });
 
