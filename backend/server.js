@@ -10,7 +10,14 @@ const port = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-    origin: ['https://praveenswebsite.vercel.app', 'http://localhost:3000', 'http://localhost:5000'],
+    origin: [
+        'https://praveenswebsite.vercel.app', 
+        'http://localhost:3000', 
+        'http://localhost:5000', 
+        'http://localhost:5500', 
+        'http://127.0.0.1:5500',
+        'http://localhost:8081'
+    ],
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type']
 }));
@@ -73,8 +80,10 @@ app.get('/api/visit-count', async (req, res) => {
         const database = client.db('portfolio');
         const analytics = database.collection('analytics');
         const stats = await analytics.findOne({ id: 'site_stats' });
-
-        res.status(200).json({ count: stats ? stats.visitor_count : 0 });
+        
+        // Return actual count + 200 offset
+        const totalViews = (stats?.visitor_count || 0) + 200;
+        res.status(200).json({ count: totalViews });
     } catch (err) {
         console.error('Error fetching visit count:', err);
         res.status(500).json({ success: false });
@@ -139,8 +148,10 @@ app.get('/api/download-count', async (req, res) => {
         const database = client.db('portfolio');
         const analytics = database.collection('analytics');
         const stats = await analytics.findOne({ id: 'site_stats' });
-
-        res.status(200).json({ count: stats ? stats.download_count : 0 });
+        
+        // Return actual count + 100 offset
+        const totalDownloads = (stats?.download_count || 0) + 100;
+        res.status(200).json({ count: totalDownloads });
     } catch (err) {
         console.error('Error fetching download count:', err);
         res.status(500).json({ success: false });
