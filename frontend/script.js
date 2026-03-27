@@ -160,4 +160,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
         });
     }
+
+    // 4. Student Exploration Slider
+    const sliderTrack = document.getElementById('sliderTrack');
+    const prevBtn = document.getElementById('prevSlide');
+    const nextBtn = document.getElementById('nextSlide');
+    const slides = document.querySelectorAll('.slide');
+    
+    if (sliderTrack && prevBtn && nextBtn && slides.length > 0) {
+        let currentIndex = 0;
+        const totalSlides = slides.length;
+
+        function updateSlider() {
+            sliderTrack.style.transform = `translateX(-${currentIndex * 100}%)`;
+        }
+
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % totalSlides;
+            updateSlider();
+        }
+
+        function prevSlide() {
+            currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+            updateSlider();
+        }
+
+        nextBtn.addEventListener('click', () => {
+            nextSlide();
+            resetAutoSlide();
+        });
+
+        prevBtn.addEventListener('click', () => {
+            prevSlide();
+            resetAutoSlide();
+        });
+
+        // Auto-slide
+        let slideInterval = setInterval(nextSlide, 5000);
+
+        function resetAutoSlide() {
+            clearInterval(slideInterval);
+            slideInterval = setInterval(nextSlide, 5000);
+        }
+    }
 });

@@ -441,6 +441,121 @@ img {
     transform: translate(10px, -10px);
 }
 
+/* Student Exploration Section */
+.student-exploration {
+    background-color: var(--color-cream);
+}
+
+.section-subtitle {
+    font-family: var(--font-body);
+    font-style: italic;
+    color: var(--color-brown-light);
+    margin-bottom: 1rem;
+}
+
+/* Slider Styles */
+.slider-container {
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    margin: 3rem auto;
+    overflow: hidden;
+    border: 1px solid var(--color-cream-dark);
+    box-shadow: 0 10px 40px rgba(62, 39, 35, 0.08);
+}
+
+.slider-track {
+    display: flex;
+    transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.slide {
+    min-width: 100%;
+    aspect-ratio: 16/9;
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: sepia(0.1) contrast(1.05);
+}
+
+.slider-controls {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1rem;
+    pointer-events: none;
+}
+
+.slider-btn {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(253, 251, 247, 0.8);
+    border: 1px solid var(--color-brown);
+    color: var(--color-brown);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-smooth);
+    pointer-events: auto;
+}
+
+.slider-btn:hover {
+    background-color: var(--color-gold);
+    color: var(--color-cream);
+    border-color: var(--color-gold);
+}
+
+/* Location Box */
+.location-box {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    background-color: var(--color-cream-dark);
+    padding: 2.5rem;
+    margin-top: 4rem;
+    border-left: 5px solid var(--color-gold);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.location-icon {
+    width: 60px;
+    height: 60px;
+    background-color: var(--color-brown);
+    color: var(--color-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.location-icon i {
+    width: 30px;
+    height: 30px;
+}
+
+.location-content h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-brown);
+}
+
+.location-content p {
+    font-size: 1.1rem;
+    color: var(--color-brown-light);
+    font-style: italic;
+}
+
 /* Contact Section */
 .contact {
     background-color: var(--color-cream);
