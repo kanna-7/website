@@ -2,8 +2,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Analytics & Tracking
     // Auto-detect backend if running on common dev ports
-    let backendUrl = ''; 
-    if (window.location.port === '5500' || window.location.port === '3000') {
+    let backendUrl = 'https://projectpraveen.onrender.com'; // Default to production
+    
+    if (window.location.port === '5500' || window.location.port === '3000' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         backendUrl = 'http://localhost:5000';
     }
 
@@ -16,7 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const footerCountEl = document.getElementById('footerVisitorCount');
                 if (heroCountEl) heroCountEl.innerText = `${data.count}+`;
                 if (footerCountEl) footerCountEl.innerText = `${data.count}+ views`;
-            });
+            })
+            .catch(err => console.log('Stats fetch error:', err));
         
         // Fetch Download Count
         fetch(`${backendUrl}/api/download-count`)
@@ -24,7 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 const downloadEl = document.getElementById('downloadCount');
                 if (downloadEl) downloadEl.innerText = `${data.count}+ downloads`;
-            });
+            })
+            .catch(err => console.log('Download stats fetch error:', err));
     }
 
     // Initial Track Visit
@@ -32,26 +35,21 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(() => updateStats())
         .catch(err => {
             console.log('Analytics offline');
+            // Show fallback stats even if backend is offline
             const heroCountEl = document.getElementById('heroVisitorCount');
             const footerCountEl = document.getElementById('footerVisitorCount');
-            if (heroCountEl) heroCountEl.parentElement.style.display = 'none';
-            if (footerCountEl) footerCountEl.style.display = 'none';
+            if (heroCountEl) heroCountEl.innerText = '200+';
+            if (footerCountEl) footerCountEl.innerText = '200+ views';
         });
 
-    // Update Download link and handle count when clicked
+    // Update Download link
     const downloadBtn = document.getElementById('downloadApk');
     if (downloadBtn) {
-        // Set href based on backendUrl
-        if (backendUrl) {
-            downloadBtn.href = `${backendUrl}/download/ramsethu`;
-        }
+        // Set href to backend download route
+        downloadBtn.href = `${backendUrl}/download/ramsethu`;
 
         downloadBtn.addEventListener('click', () => {
-            // Track download asynchronously
-            fetch(`${backendUrl}/download/ramsethu`)
-                .catch(err => console.log('Download tracking error:', err));
-            
-            // Wait 2 seconds for backend to process, then update the UI
+            // Wait 2 seconds for backend to process count, then update the UI
             setTimeout(updateStats, 2000);
         });
     }

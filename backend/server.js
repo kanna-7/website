@@ -57,23 +57,18 @@ app.get('/', (req, res) => {
 // Analytics: Track Page Visit
 app.post('/api/visit', async (req, res) => {
     try {
-        // Increment visitor count
-        try {
-            const database = client.db('portfolio');
-            const analytics = database.collection('analytics');
-            await analytics.updateOne(
-                { id: 'site_stats' },
-                { $inc: { visitor_count: 1 } },
-                { upsert: true }
-            );
-        } catch (dbErr) {
-            console.error('Database analytics error (Visit):', dbErr);
-        }
+        const database = client.db('portfolio');
+        const analytics = database.collection('analytics');
+        await analytics.updateOne(
+            { id: 'site_stats' },
+            { $inc: { visitor_count: 1 } },
+            { upsert: true }
+        ).catch(err => console.error('Database update error (Visit):', err));
 
         res.status(200).json({ success: true });
     } catch (err) {
-        console.error('Critical visit error:', err);
-        res.status(500).json({ success: false });
+        console.error('Visit tracking error (Safe):', err);
+        res.status(200).json({ success: true, note: 'Offline mode' });
     }
 });
 
@@ -84,12 +79,12 @@ app.get('/api/visit-count', async (req, res) => {
         const analytics = database.collection('analytics');
         const stats = await analytics.findOne({ id: 'site_stats' });
         
-        // Return actual count + 200 offset
+        // Return actual count + 200 offset (Fallback to 0 if DB error)
         const totalViews = (stats?.visitor_count || 0) + 200;
         res.status(200).json({ count: totalViews });
     } catch (err) {
-        console.error('Error fetching visit count:', err);
-        res.status(500).json({ success: false });
+        console.error('Error fetching visit count (Safe):', err);
+        res.status(200).json({ count: 200, note: 'Database offline' });
     }
 });
 
@@ -152,12 +147,12 @@ app.get('/api/download-count', async (req, res) => {
         const analytics = database.collection('analytics');
         const stats = await analytics.findOne({ id: 'site_stats' });
         
-        // Return actual count + 100 offset
+        // Return actual count + 100 offset (Fallback to 0 if DB error)
         const totalDownloads = (stats?.download_count || 0) + 100;
         res.status(200).json({ count: totalDownloads });
     } catch (err) {
-        console.error('Error fetching download count:', err);
-        res.status(500).json({ success: false });
+        console.error('Error fetching download count (Safe):', err);
+        res.status(200).json({ count: 100, note: 'Database offline' });
     }
 });
 
