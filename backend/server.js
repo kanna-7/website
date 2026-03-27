@@ -46,9 +46,12 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+// Static Files
+app.use(express.static(path.join(__dirname, '../frontend')));
+
 // Routes
 app.get('/', (req, res) => {
-    res.send('ProjectPraveen Backend is running');
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
 // Analytics: Track Page Visit

@@ -1,0 +1,13 @@
+{
+  "name": "projectpraveen-frontend",
+  "version": "1.0.0",
+  "description": "Static frontend for ProjectPraveen",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

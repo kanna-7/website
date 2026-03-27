@@ -1,7 +1,11 @@
 // ProjectPraveen - Script Logic
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Analytics & Tracking
-    const backendUrl = 'https://projectpraveen.onrender.com';
+    // Auto-detect backend if running on common dev ports
+    let backendUrl = ''; 
+    if (window.location.port === '5500' || window.location.port === '3000') {
+        backendUrl = 'http://localhost:5000';
+    }
 
     function updateStats() {
         // Fetch Visitor Count
@@ -34,10 +38,19 @@ document.addEventListener('DOMContentLoaded', () => {
             if (footerCountEl) footerCountEl.style.display = 'none';
         });
 
-    // Update Download count when button is clicked
-    const downloadBtn = document.querySelector('a[download]');
+    // Update Download link and handle count when clicked
+    const downloadBtn = document.getElementById('downloadApk');
     if (downloadBtn) {
+        // Set href based on backendUrl
+        if (backendUrl) {
+            downloadBtn.href = `${backendUrl}/download/ramsethu`;
+        }
+
         downloadBtn.addEventListener('click', () => {
+            // Track download asynchronously
+            fetch(`${backendUrl}/download/ramsethu`)
+                .catch(err => console.log('Download tracking error:', err));
+            
             // Wait 2 seconds for backend to process, then update the UI
             setTimeout(updateStats, 2000);
         });
